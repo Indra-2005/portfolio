@@ -1,33 +1,139 @@
-import { FolderGit2, Database } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { projectsApi } from '../services/api';
+import { SEO } from '../components/SEO';
+import { SectionHeading } from '../components/SectionHeading';
+import { ProjectGrid } from '../components/ProjectGrid';
+import { LoadingState } from '../components/LoadingState';
+import { EmptyState } from '../components/EmptyState';
+import { ErrorState } from '../components/ErrorState';
+import { Search } from 'lucide-react';
 
 export function ProjectsPage() {
-  return (
-    <div className="max-w-3xl mx-auto space-y-8 py-6">
-      <div className="space-y-2">
-        <div className="inline-flex items-center space-x-2 text-indigo-400 text-xs font-mono uppercase tracking-wider">
-          <FolderGit2 className="w-3.5 h-3.5" />
-          <span>Route: /projects</span>
-        </div>
-        <h1 className="text-3xl font-bold text-white">Projects</h1>
-        <p className="text-slate-400">
-          This portfolio is strictly database-driven. All projects, categories, order rankings, and feature flags will be queried dynamically from PostgreSQL.
-        </p>
-      </div>
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-      <div className="p-8 rounded-xl bg-slate-900/50 border border-dashed border-slate-800 text-center space-y-4">
-        <div className="w-12 h-12 rounded-full bg-slate-800 text-indigo-400 flex items-center justify-center mx-auto">
-          <Database className="w-6 h-6" />
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      // Fetch published projects from PostgreSQL (backend enforces published=True & display_order)
+      const res = await projectsApi.getPublicProjects({ page: 1, page_size: 50 });
+      setProjects(res.items || []);
+    } catch (err) {
+      setError(err.message || 'Failed to retrieve published projects from the database.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  // Compute categories dynamically from real fetched database records
+  const uniqueCategories = [
+    'All',
+    ...Array.from(new Set(projects.map((p) => p.category).filter(Boolean))),
+  ];
+
+  // Client-side search and category filtering
+  const filteredProjects = projects.filter((p) => {
+    const matchesCategory =
+      selectedCategory === 'All' ||
+      (p.category && p.category.toLowerCase() === selectedCategory.toLowerCase());
+
+    const query = searchQuery.toLowerCase().trim();
+    const matchesSearch =
+      !query ||
+      p.title.toLowerCase().includes(query) ||
+      (p.short_description && p.short_description.toLowerCase().includes(query)) ||
+      (Array.isArray(p.technologies) &&
+        p.technologies.some((t) => t.toLowerCase().includes(query)));
+
+    return matchesCategory && matchesSearch;
+  });
+
+  return (
+    <>
+      <SEO
+        title="Machine Learning & Engineering Projects"
+        description="Explore machine learning projects, data-driven applications, and software systems built by Devendra Bhoi."
+      />
+
+      <div className="space-y-10 sm:space-y-12">
+        {/* Section Header */}
+        <div className="space-y-4">
+          <SectionHeading
+            eyebrow="Portfolio Showcase"
+            title="Projects &amp; Case Studies"
+            description="All projects are queried dynamically from the PostgreSQL database, respecting priority order rankings and publication controls."
+          />
         </div>
-        <div className="space-y-1">
-          <h3 className="text-base font-semibold text-slate-200">Dynamic Project Feed (Phase 2)</h3>
-          <p className="text-sm text-slate-400 max-w-md mx-auto">
-            Zero hardcoded project mockups. Projects will be populated via the FastAPI REST API after the Project model, repository, and CRUD endpoints are implemented in Phase 2.
-          </p>
+
+        {/* Filter & Search Bar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+          {/* Category Tabs */}
+          <div className="flex items-center space-x-1.5 overflow-x-auto pb-2 sm:pb-0 scrollbar-none" role="tablist">
+            {uniqueCategories.map((category) => (
+              <button
+                key={category}
+                type="button"
+                role="tab"
+                aria-selected={selectedCategory === category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-colors whitespace-nowrap cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
+                  selectedCategory === category
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 border border-slate-200'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          {/* Search Input */}
+          <div className="relative w-full sm:w-72">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search by tech, keyword, or title..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Filter projects"
+              className="w-full pl-10 pr-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
+            />
+          </div>
         </div>
-        <div className="inline-block text-xs font-mono px-3 py-1 rounded bg-slate-800 text-slate-400">
-          Route verification status: OK
-        </div>
+
+        {/* Projects Viewport */}
+        {loading ? (
+          <LoadingState message="Connecting to PostgreSQL &amp; retrieving projects..." />
+        ) : error ? (
+          <ErrorState error={error} onRetry={fetchProjects} />
+        ) : filteredProjects.length === 0 ? (
+          <EmptyState
+            title={searchQuery || selectedCategory !== 'All' ? 'No matching projects' : 'No projects published'}
+            description={
+              searchQuery || selectedCategory !== 'All'
+                ? 'Try adjusting your search terms or selecting a different category filter.'
+                : 'Projects are currently being cataloged in the database. Please check back soon.'
+            }
+            actionText={searchQuery || selectedCategory !== 'All' ? 'Reset Filters' : undefined}
+            onAction={() => {
+              setSearchQuery('');
+              setSelectedCategory('All');
+            }}
+          />
+        ) : (
+          <ProjectGrid projects={filteredProjects} />
+        )}
       </div>
-    </div>
+    </>
   );
 }
+
+export default ProjectsPage;

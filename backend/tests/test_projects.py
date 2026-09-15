@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models.project import Project
-from app.schemas.project import ProjectCreate, ProjectUpdate
+from app.schemas.project import ProjectCreate
 
 
 # ==============================================================================
@@ -141,10 +141,10 @@ def test_schema_invalid_date_range_rejected() -> None:
 # 3. PUBLIC API TESTS
 # ==============================================================================
 
-def test_public_projects_only_returns_published(client) -> None:
+def test_public_projects_only_returns_published(client, auth_client) -> None:
     """Ensure GET /api/v1/projects exclusively returns published projects."""
-    # Create one published and one unpublished project via admin
-    client.post(
+    # Create one published and one unpublished project via authenticated admin
+    auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "Published Project",
@@ -155,7 +155,7 @@ def test_public_projects_only_returns_published(client) -> None:
             "published": True,
         },
     )
-    client.post(
+    auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "Unpublished Draft",
@@ -175,10 +175,10 @@ def test_public_projects_only_returns_published(client) -> None:
     assert data["items"][0]["slug"] == "pub-proj"
 
 
-def test_public_projects_filtering(client) -> None:
+def test_public_projects_filtering(client, auth_client) -> None:
     """Test featured and category filtering on public projects."""
     # Project A: Backend, featured
-    client.post(
+    auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "API Gateway",
@@ -192,7 +192,7 @@ def test_public_projects_filtering(client) -> None:
         },
     )
     # Project B: Frontend, not featured
-    client.post(
+    auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "Dashboard UI",
@@ -221,10 +221,10 @@ def test_public_projects_filtering(client) -> None:
     assert d_cat["items"][0]["slug"] == "dashboard-ui"
 
 
-def test_public_projects_pagination_and_ordering(client) -> None:
+def test_public_projects_pagination_and_ordering(client, auth_client) -> None:
     """Verify pagination calculation and deterministic ordering by display_order ASC."""
     for i in range(5):
-        client.post(
+        auth_client.post(
             "/api/v1/admin/projects",
             json={
                 "title": f"Project {i}",
@@ -252,9 +252,9 @@ def test_public_projects_pagination_and_ordering(client) -> None:
     assert data["items"][1]["slug"] == "project-3"
 
 
-def test_public_project_by_slug(client) -> None:
+def test_public_project_by_slug(client, auth_client) -> None:
     """Test retrieving published project by slug, and 404 for unpublished or nonexistent."""
-    client.post(
+    auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "Live Project",
@@ -265,7 +265,7 @@ def test_public_project_by_slug(client) -> None:
             "published": True,
         },
     )
-    client.post(
+    auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "Draft Project",
@@ -292,11 +292,37 @@ def test_public_project_by_slug(client) -> None:
 
 
 # ==============================================================================
-# 4. ADMIN API TESTS
+# 4. ADMIN API AUTHORIZATION & CRUD TESTS
 # ==============================================================================
 
-def test_admin_create_project(client) -> None:
-    """Test creating a project record via POST /api/v1/admin/projects."""
+def test_unauthenticated_admin_endpoints_return_401(client) -> None:
+    """Security verification: Unauthenticated requests to all admin endpoints MUST return 401."""
+    # POST
+    r_post = client.post(
+        "/api/v1/admin/projects",
+        json={"title": "Hack", "slug": "hack", "short_description": "d", "description": "d", "technologies": ["x"]},
+    )
+    assert r_post.status_code == 401
+
+    # GET list
+    r_list = client.get("/api/v1/admin/projects")
+    assert r_list.status_code == 401
+
+    # GET detail
+    r_get = client.get("/api/v1/admin/projects/1")
+    assert r_get.status_code == 401
+
+    # PATCH
+    r_patch = client.patch("/api/v1/admin/projects/1", json={"title": "Hacked"})
+    assert r_patch.status_code == 401
+
+    # DELETE
+    r_delete = client.delete("/api/v1/admin/projects/1")
+    assert r_delete.status_code == 401
+
+
+def test_admin_create_project(auth_client) -> None:
+    """Test creating a project record via POST /api/v1/admin/projects with authentication."""
     payload = {
         "title": "Real-Time Telemetry",
         "slug": "real-time-telemetry",
@@ -309,7 +335,7 @@ def test_admin_create_project(client) -> None:
         "published": False,
         "display_order": 1,
     }
-    response = client.post("/api/v1/admin/projects", json=payload)
+    response = auth_client.post("/api/v1/admin/projects", json=payload)
     assert response.status_code == 201
     data = response.json()
     assert data["id"] is not None
@@ -320,7 +346,7 @@ def test_admin_create_project(client) -> None:
     assert data["published"] is False
 
 
-def test_admin_create_duplicate_slug_returns_409(client) -> None:
+def test_admin_create_duplicate_slug_returns_409(auth_client) -> None:
     """Verify that attempting to create a project with an existing slug returns 409 Conflict."""
     payload = {
         "title": "Unique Project",
@@ -329,17 +355,17 @@ def test_admin_create_duplicate_slug_returns_409(client) -> None:
         "description": "Full desc",
         "technologies": ["Python"],
     }
-    r1 = client.post("/api/v1/admin/projects", json=payload)
+    r1 = auth_client.post("/api/v1/admin/projects", json=payload)
     assert r1.status_code == 201
 
-    r2 = client.post("/api/v1/admin/projects", json=payload)
+    r2 = auth_client.post("/api/v1/admin/projects", json=payload)
     assert r2.status_code == 409
     assert "already exists" in r2.json()["detail"]
 
 
-def test_admin_list_projects_includes_unpublished(client) -> None:
+def test_admin_list_projects_includes_unpublished(auth_client) -> None:
     """Verify GET /api/v1/admin/projects returns both published and draft projects."""
-    client.post(
+    auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "A",
@@ -350,7 +376,7 @@ def test_admin_list_projects_includes_unpublished(client) -> None:
             "published": True,
         },
     )
-    client.post(
+    auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "B",
@@ -362,7 +388,7 @@ def test_admin_list_projects_includes_unpublished(client) -> None:
         },
     )
 
-    response = client.get("/api/v1/admin/projects")
+    response = auth_client.get("/api/v1/admin/projects")
     assert response.status_code == 200
     data = response.json()
     assert data["total"] == 2
@@ -370,9 +396,9 @@ def test_admin_list_projects_includes_unpublished(client) -> None:
     assert slugs == {"proj-a", "proj-b"}
 
 
-def test_admin_get_project_by_id(client) -> None:
+def test_admin_get_project_by_id(auth_client) -> None:
     """Verify GET /api/v1/admin/projects/{id} returns 200 for existing, 404 for missing."""
-    r_create = client.post(
+    r_create = auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "Look Me Up",
@@ -385,18 +411,18 @@ def test_admin_get_project_by_id(client) -> None:
     proj_id = r_create.json()["id"]
 
     # Existing
-    r_found = client.get(f"/api/v1/admin/projects/{proj_id}")
+    r_found = auth_client.get(f"/api/v1/admin/projects/{proj_id}")
     assert r_found.status_code == 200
     assert r_found.json()["id"] == proj_id
 
     # Nonexistent
-    r_missing = client.get("/api/v1/admin/projects/999999")
+    r_missing = auth_client.get("/api/v1/admin/projects/999999")
     assert r_missing.status_code == 404
 
 
-def test_admin_update_project(client) -> None:
+def test_admin_update_project(auth_client) -> None:
     """Test partial update via PATCH /api/v1/admin/projects/{id}."""
-    r_create = client.post(
+    r_create = auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "Initial Title",
@@ -414,7 +440,7 @@ def test_admin_update_project(client) -> None:
         "title": "Updated Title",
         "published": True,
     }
-    r_patch = client.patch(f"/api/v1/admin/projects/{proj_id}", json=update_payload)
+    r_patch = auth_client.patch(f"/api/v1/admin/projects/{proj_id}", json=update_payload)
     assert r_patch.status_code == 200
     updated_data = r_patch.json()
     assert updated_data["title"] == "Updated Title"
@@ -422,9 +448,9 @@ def test_admin_update_project(client) -> None:
     assert updated_data["slug"] == "initial-title"  # Unchanged
 
 
-def test_admin_update_slug_conflict_returns_409(client) -> None:
+def test_admin_update_slug_conflict_returns_409(auth_client) -> None:
     """Test that updating a project's slug to one already used by another project returns 409."""
-    client.post(
+    auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "Alpha",
@@ -434,7 +460,7 @@ def test_admin_update_slug_conflict_returns_409(client) -> None:
             "technologies": ["Python"],
         },
     )
-    r2 = client.post(
+    r2 = auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "Beta",
@@ -447,13 +473,13 @@ def test_admin_update_slug_conflict_returns_409(client) -> None:
     beta_id = r2.json()["id"]
 
     # Try updating Beta's slug to Alpha's slug
-    r_conflict = client.patch(f"/api/v1/admin/projects/{beta_id}", json={"slug": "slug-alpha"})
+    r_conflict = auth_client.patch(f"/api/v1/admin/projects/{beta_id}", json={"slug": "slug-alpha"})
     assert r_conflict.status_code == 409
 
 
-def test_admin_delete_project(client) -> None:
+def test_admin_delete_project(auth_client) -> None:
     """Test deleting project returns 204, and subsequent retrieval returns 404."""
-    r_create = client.post(
+    r_create = auth_client.post(
         "/api/v1/admin/projects",
         json={
             "title": "To Be Deleted",
@@ -466,13 +492,13 @@ def test_admin_delete_project(client) -> None:
     proj_id = r_create.json()["id"]
 
     # Delete
-    r_delete = client.delete(f"/api/v1/admin/projects/{proj_id}")
+    r_delete = auth_client.delete(f"/api/v1/admin/projects/{proj_id}")
     assert r_delete.status_code == 204
 
     # Subsequent GET returns 404
-    r_verify = client.get(f"/api/v1/admin/projects/{proj_id}")
+    r_verify = auth_client.get(f"/api/v1/admin/projects/{proj_id}")
     assert r_verify.status_code == 404
 
     # Deleting nonexistent returns 404
-    r_del_again = client.delete(f"/api/v1/admin/projects/{proj_id}")
+    r_del_again = auth_client.delete(f"/api/v1/admin/projects/{proj_id}")
     assert r_del_again.status_code == 404

@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /projects
+Allow: /projects/*
+Allow: /contact
+Disallow: /admin
+Disallow: /admin/*
+
+Sitemap: https://portfolio.local/sitemap.xml
