@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { projectsApi } from '../../services/api';
+import { SEO } from '../../components/SEO';
 import {
   FolderGit2,
   Plus,
@@ -301,56 +302,63 @@ export function AdminProjectsPage() {
   const categories = Array.from(new Set(projects.map((p) => p.category).filter(Boolean)));
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 py-4">
-      {/* Toast Alert */}
-      {toastMessage && (
-        <div
-          className={`fixed bottom-6 right-6 z-50 p-4 rounded-xl shadow-xl border text-sm flex items-center space-x-3 transition-all ${
-            toastMessage.isError
-              ? 'bg-rose-50 border-rose-200 text-rose-800'
-              : 'bg-emerald-50 border-emerald-200 text-emerald-800'
-          }`}
-        >
-          {toastMessage.isError ? (
-            <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-600" />
-          ) : (
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
-          )}
-          <span>{toastMessage.text}</span>
-        </div>
-      )}
+    <>
+      <SEO
+        title="Manage Projects"
+        description="Create, edit, reorder, and manage portfolio project case studies."
+        noindex={true}
+      />
 
-      {/* Header and Actions Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200">
-        <div className="space-y-1">
-          <Link
-            to="/admin"
-            className="inline-flex items-center text-xs text-slate-500 hover:text-blue-600 font-mono transition-colors mb-1"
+      <div className="max-w-6xl mx-auto space-y-6 py-4">
+        {/* Toast Alert */}
+        {toastMessage && (
+          <div
+            className={`fixed bottom-6 right-6 z-50 p-4 rounded-xl shadow-xl border text-sm flex items-center space-x-3 transition-all ${
+              toastMessage.isError
+                ? 'bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-200'
+                : 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-900 text-emerald-800 dark:text-emerald-200'
+            }`}
           >
-            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
-            Back to Dashboard
-          </Link>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 flex items-center space-x-2">
-            <FolderGit2 className="w-7 h-7 text-blue-600" />
-            <span>Project Management</span>
-          </h1>
-          <p className="text-sm text-slate-600">
-            Create, update, reorder, feature, and toggle visibility for all database-driven projects.
-          </p>
+            {toastMessage.isError ? (
+              <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-600 dark:text-rose-400" />
+            ) : (
+              <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
+            )}
+            <span>{toastMessage.text}</span>
+          </div>
+        )}
+
+        {/* Header and Actions Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
+          <div className="space-y-1">
+            <Link
+              to="/admin"
+              className="inline-flex items-center text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 font-mono transition-colors mb-1"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+              Back to Dashboard
+            </Link>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+              <FolderGit2 className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+              <span>Project Management</span>
+            </h1>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Create, update, reorder, feature, and toggle visibility for all database-driven projects.
+            </p>
+          </div>
+
+          <button
+            onClick={openCreateModal}
+            id="admin-create-project-btn"
+            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-xs transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>New Project</span>
+          </button>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          id="admin-create-project-btn"
-          className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-xs transition-all cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>New Project</span>
-        </button>
-      </div>
-
-      {/* Search & Filter Controls */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+        {/* Search & Filter Controls */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs">
         {/* Search */}
         <div className="relative flex-1">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -868,7 +876,8 @@ export function AdminProjectsPage() {
         </div>
       )}
     </div>
-  );
+  </>
+);
 }
 
 export default AdminProjectsPage;

@@ -4,13 +4,13 @@ import { Loader2 } from 'lucide-react';
 
 const VARIANTS = {
   primary:
-    'bg-blue-600 hover:bg-blue-700 text-white shadow-xs border border-transparent',
+    'bg-blue-600 hover:bg-blue-700 text-white shadow-xs border border-transparent dark:bg-blue-600 dark:hover:bg-blue-500',
   secondary:
-    'bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 shadow-xs',
+    'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 shadow-xs',
   outline:
-    'bg-transparent hover:bg-slate-100 text-slate-700 border border-slate-300',
+    'bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700',
   ghost:
-    'bg-transparent hover:bg-slate-100 text-slate-600 hover:text-slate-900',
+    'bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white',
 };
 
 const SIZES = {
@@ -37,7 +37,7 @@ export const Button = forwardRef(function Button(
   ref
 ) {
   const baseClasses =
-    'inline-flex items-center justify-center font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/80 focus-visible:ring-offset-2 focus-visible:ring-offset-white select-none';
+    'inline-flex items-center justify-center font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/80 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950 select-none';
 
   const combinedClasses = `${baseClasses} ${VARIANTS[variant] || VARIANTS.primary} ${SIZES[size] || SIZES.md} ${className}`;
 

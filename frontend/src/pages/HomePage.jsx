@@ -5,7 +5,7 @@ import { SEO } from '../components/SEO';
 import { Button } from '../components/Button';
 import { SectionHeading } from '../components/SectionHeading';
 import { ProjectGrid } from '../components/ProjectGrid';
-import { LoadingState } from '../components/LoadingState';
+import { ProjectGridSkeleton } from '../components/LoadingState';
 import { EmptyState } from '../components/EmptyState';
 import { TechnologyTag } from '../components/TechnologyTag';
 import {
@@ -92,7 +92,7 @@ export function HomePage() {
   return (
     <>
       <SEO
-        title="Machine Learning & AI Enthusiast | Computer Engineering"
+        title="Devendra Bhoi | Machine Learning & Software Portfolio"
         description="Devendra Bhoi — Computer Engineering graduate from SSBT COET (2026) focused on Machine Learning, AI fundamentals, Python, SQL, and data-driven systems."
       />
 
@@ -101,17 +101,17 @@ export function HomePage() {
         {/* HERO SECTION */}
         {/* ==================================================================== */}
         <section className="pt-4 sm:pt-10 pb-6 max-w-4xl mx-auto text-left space-y-8">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-mono font-medium tracking-wide uppercase bg-blue-50 text-blue-700 border border-blue-200/80">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-mono font-medium tracking-wide uppercase bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800/80">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>SSBT COET (2026) • Computer Engineering</span>
           </div>
 
           <div className="space-y-4">
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
               Applying Machine Learning &amp; AI Fundamentals to Practical Systems.
             </h1>
-            <p className="text-base sm:text-xl text-slate-600 leading-relaxed font-normal max-w-3xl">
-              I am <span className="font-semibold text-slate-900">Devendra Bhoi</span>, a Computer Engineering student graduating in 2026 from SSBT COET with a primary interest in Machine Learning and Artificial Intelligence. I develop data-driven applications, clean predictive pipelines, and structured backend services with Python, SQL, and modern frameworks.
+            <p className="text-base sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-normal max-w-3xl">
+              I am <span className="font-semibold text-slate-900 dark:text-white">Devendra Bhoi</span>, a Computer Engineering student graduating in 2026 from SSBT COET with a primary interest in Machine Learning and Artificial Intelligence. I develop data-driven applications, clean predictive pipelines, and structured backend services with Python, SQL, and modern frameworks.
             </p>
           </div>
 
@@ -157,7 +157,7 @@ export function HomePage() {
             />
             <Link
               to="/projects"
-              className="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors group flex-shrink-0"
+              className="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group flex-shrink-0"
             >
               <span>View all projects</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -165,9 +165,9 @@ export function HomePage() {
           </div>
 
           {loading ? (
-            <LoadingState message="Fetching featured projects from PostgreSQL..." />
+            <ProjectGridSkeleton count={3} />
           ) : error ? (
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-600">
+            <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-600 dark:text-slate-400">
               {error}
             </div>
           ) : featuredProjects.length === 0 ? (
@@ -198,13 +198,13 @@ export function HomePage() {
               return (
                 <div
                   key={cat.title}
-                  className="p-6 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all space-y-4"
+                  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all space-y-4"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+                    <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <h3 className="font-semibold text-slate-900 text-base tracking-tight">
+                    <h3 className="font-semibold text-slate-900 dark:text-white text-base tracking-tight">
                       {cat.title}
                     </h3>
                   </div>
@@ -222,17 +222,17 @@ export function HomePage() {
         {/* ==================================================================== */}
         {/* ABOUT PREVIEW */}
         {/* ==================================================================== */}
-        <section className="p-8 sm:p-12 rounded-3xl bg-slate-50 border border-slate-200 space-y-6">
-          <div className="flex items-center space-x-2.5 text-xs font-mono uppercase tracking-wider text-blue-700 font-semibold">
+        <section className="p-8 sm:p-12 rounded-3xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-6">
+          <div className="flex items-center space-x-2.5 text-xs font-mono uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">
             <GraduationCap className="w-4 h-4" />
             <span>Academic Background Snapshot</span>
           </div>
 
           <div className="space-y-4 max-w-3xl">
-            <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
               Solid foundations in Computer Engineering, ML workflows, and clean code.
             </h3>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
               With a background in Computer Engineering at SSBT COET (Graduation Year: 2026), I approach problem solving with a focus on data preprocessing, feature engineering, predictive modeling, and clean relational architecture.
             </p>
           </div>
@@ -254,15 +254,15 @@ export function HomePage() {
         {/* CONTACT CTA BANNER */}
         {/* ==================================================================== */}
         <section className="text-center max-w-2xl mx-auto py-8 sm:py-12 space-y-6">
-          <div className="inline-flex p-3 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200/80 mx-auto">
+          <div className="inline-flex p-3 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800/80 mx-auto">
             <Sparkles className="w-6 h-6" />
           </div>
 
           <div className="space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Interested in collaborating or discussing opportunities?
             </h2>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
               I am actively seeking entry-level opportunities in Machine Learning, AI, and Software Engineering where I can apply my skills to real-world challenges.
             </p>
           </div>

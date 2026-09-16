@@ -6,7 +6,7 @@ export function TechnologyTag({ name, size = 'sm', className = '' }) {
 
   return (
     <span
-      className={`inline-flex items-center font-mono rounded-md bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-300 transition-colors select-none ${sizeClasses} ${className}`}
+      className={`inline-flex items-center font-mono rounded-md bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors select-none ${sizeClasses} ${className}`}
     >
       {name}
     </span>
