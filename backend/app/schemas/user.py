@@ -33,7 +33,9 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     """Schema for creating a new user/admin."""
-    password: str = Field(..., min_length=8, description="Plaintext password (min 8 characters)")
+    password: str = Field(..., min_length=8, max_length=128, description="Plaintext password (min 8 characters)")
+
+    model_config = ConfigDict(extra="forbid")
 
     @field_validator("password", mode="before")
     @classmethod
@@ -59,8 +61,10 @@ class UserResponse(UserBase):
 
 class LoginRequest(BaseModel):
     """Schema for administrator login."""
-    username: str = Field(..., min_length=1, description="Username or email address")
-    password: str = Field(..., min_length=1, description="Account password")
+    username: str = Field(..., min_length=1, max_length=255, description="Username or email address")
+    password: str = Field(..., min_length=1, max_length=128, description="Account password")
+
+    model_config = ConfigDict(extra="forbid")
 
     @field_validator("username", "password", mode="before")
     @classmethod

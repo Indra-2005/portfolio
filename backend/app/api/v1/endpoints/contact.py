@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_active_user
+from app.api.deps import get_current_active_user, verify_csrf_protection
 from app.core.database import get_db
 from app.core.rate_limiter import contact_rate_limiter
 from app.models.user import User
@@ -74,6 +74,7 @@ def list_contact_messages(
 def mark_message_as_read(
     message_id: int,
     current_user: User = Depends(get_current_active_user),
+    _csrf: None = Depends(verify_csrf_protection),
     db: Session = Depends(get_db),
 ) -> ContactMessageResponse:
     """Mark a message as read (Admin only)."""

@@ -59,26 +59,41 @@ Engineered by **Devendra Bhoi** (Computer Engineering Graduate) to demonstrate c
 
 ---
 
-## 🔒 Security & Defense-in-Depth
+## 🔒 Security Architecture & Defensive Controls
 
-1. **Signed JWT in HttpOnly Cookies**:
-   - Access tokens are signed using HS256 and transmitted exclusively inside `httpOnly`, `SameSite=Lax` cookies.
-   - JavaScript code running in the browser cannot read or exfiltrate tokens via `localStorage` or `sessionStorage`, mitigating Cross-Site Scripting (XSS) credential theft.
-2. **CSRF Protection on State-Changing Endpoints**:
-   - All mutating admin requests (`POST`, `PATCH`, `DELETE`) are guarded by `verify_csrf_protection` dependency injection.
-   - Requests must originate from authorized origins (`BACKEND_CORS_ORIGINS`) and include custom headers (`X-Requested-With: XMLHttpRequest`), blocking unauthorized cross-site form submissions.
-3. **Server-Side Sliding-Window Rate Limiting**:
-   - Contact form submissions (`POST /api/v1/contact`) are metered by client IP with an in-memory sliding window limiter (e.g. max 5 messages per 10 minutes) preventing automated flooding.
-4. **Honeypot Spam Defense**:
-   - The contact form includes an invisible honeypot field. Automated spam bots populating this field are rejected with HTTP 400.
-5. **Production `SECRET_KEY` Validator**:
-   - `backend/app/core/config.py` enforces a startup validator: if `ENVIRONMENT="production"`, startup immediately aborts if `SECRET_KEY` matches default or insecure development placeholders.
-6. **Native Bcrypt Password Hashing**:
-   - Passwords are salted and hashed using `bcrypt` (work factor 12). Raw passwords and hashes are never exposed through API response schemas.
-7. **SQL Injection Immunity**:
-   - All database queries are executed through SQLAlchemy 2.x parameterized query construction; no raw SQL string concatenation is used.
-8. **Zero Hardcoded Secrets**:
-   - `.env` files are strictly excluded from source control. Clean, non-sensitive configuration templates are documented in `.env.example`.
+1. **Native Bcrypt Password Hashing**:
+   - Administrator passwords are salted and hashed using `bcrypt` with a work factor of 12. Plaintext passwords and password hashes are never exposed through API response schemas.
+2. **Signed JWT Authentication in HttpOnly Cookies**:
+   - Authentication tokens are cryptographically signed using HS256 with strict expiration (`ACCESS_TOKEN_EXPIRE_MINUTES`).
+   - Tokens are transmitted and stored exclusively inside `httpOnly`, `SameSite=Lax` cookies (`Secure=True` enforced in production).
+   - Zero tokens are stored in browser `localStorage` or `sessionStorage`, mitigating Cross-Site Scripting (XSS) credential theft.
+3. **Login Brute-Force & Credential Stuffing Protection**:
+   - A thread-safe, in-memory sliding-window `LoginFailureLimiter` tracks failed authentication attempts by `(normalized_identifier, client_ip)`.
+   - Maximum 5 failed attempts within 10 minutes; subsequent attempts from that key are blocked with HTTP 429 Too Many Requests.
+   - Successful authentication resets the failure counter. Generic authentication error messages ("Invalid username or password.") prevent account enumeration.
+4. **CSRF Protection on Mutating Endpoints**:
+   - State-changing admin endpoints (`POST`, `PUT`, `PATCH`, `DELETE`) require both trusted Origin/Referer (`BACKEND_CORS_ORIGINS`) and a custom request header (`X-Requested-With` or `X-CSRF-Token`), defending cookie-authenticated sessions against cross-site form forgery.
+   - Public contact form submission remains accessible without requiring authentication cookies or admin CSRF headers.
+5. **Contact Form Rate Limiting & Spam Honeypot**:
+   - Public inquiries are metered via an in-memory sliding-window limiter (max 5 submissions per 10 minutes per client IP).
+   - An invisible honeypot field catches automated spam bots without impacting legitimate visitors.
+6. **Parameterized & ORM Database Queries**:
+   - Database operations are executed using SQLAlchemy 2.x ORM models with bound parameters.
+   - Slugs, queries, and filters are strictly parameterized, protecting against SQL injection attacks.
+7. **Strict Input Validation & Bounded Payloads**:
+   - Pydantic v2 schemas enforce field length boundaries, URL schemes, email formats, and pagination limits.
+   - Mutation schemas enforce `extra="forbid"` to reject unexpected payload fields.
+8. **Production Security Guardrails**:
+   - In production (`ENVIRONMENT="production"`), startup settings validation strictly requires `COOKIE_SECURE=True`, rejects default or weak `SECRET_KEY` values (minimum 32 characters), and forbids wildcard `*` CORS origins.
+9. **Defensive Security Headers**:
+   - Responses include `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, and `Permissions-Policy`.
+   - Content-Security-Policy enforces `frame-ancestors 'none'` to mitigate clickjacking, with documentation endpoints specifically scoped.
+10. **Zero Hardcoded Secrets**:
+    - `.env` files are strictly excluded from source control via `.gitignore`. Sanitized configuration templates are maintained in `.env.example`.
+
+### Architecture Limitations & Operational Context
+- **In-Memory Rate Limiting**: The sliding-window rate limiters for contact submissions and login brute-force protection operate in process memory. In a distributed multi-instance deployment, rate limiting state applies per application instance.
+- **Client IP Attribution**: Client IP address resolution relies on socket connection host (`request.client.host`) and deliberately avoids trusting arbitrary unverified `X-Forwarded-For` headers from the public internet. Reverse proxy environments (such as Render or Nginx) must configure trusted proxy headers via ASGI middleware or Uvicorn proxy header settings.
 
 ---
 

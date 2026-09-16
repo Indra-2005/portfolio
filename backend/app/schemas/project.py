@@ -26,8 +26,8 @@ class ProjectBase(BaseModel):
         description="URL-friendly unique identifier (e.g. 'smart-traffic-system')",
     )
     short_description: str = Field(..., min_length=1, max_length=500, description="Brief summary for listings")
-    description: str = Field(..., min_length=1, description="Full detailed markdown/text description")
-    technologies: List[str] = Field(..., min_length=1, description="Array of technologies/tools used")
+    description: str = Field(..., min_length=1, max_length=50000, description="Full detailed markdown/text description")
+    technologies: List[str] = Field(..., min_length=1, max_length=50, description="Array of technologies/tools used")
 
     category: Optional[str] = Field(default=None, max_length=100, description="Project category (e.g. 'Backend', 'Full Stack')")
     github_url: Optional[str] = Field(default=None, max_length=500, description="GitHub repository link")
@@ -52,6 +52,21 @@ class ProjectBase(BaseModel):
             if not v:
                 raise ValueError("Field cannot be blank or contain only whitespace.")
         return v
+
+    @field_validator("technologies", mode="before")
+    @classmethod
+    def validate_technologies(cls, v: List[str]) -> List[str]:
+        if not isinstance(v, list):
+            raise ValueError("Technologies must be a list.")
+        clean_techs = []
+        for t in v:
+            if not isinstance(t, str) or not t.strip():
+                raise ValueError("Technology item cannot be empty.")
+            t_clean = t.strip()
+            if len(t_clean) > 50:
+                raise ValueError("Technology item cannot exceed 50 characters.")
+            clean_techs.append(t_clean)
+        return clean_techs
 
     @field_validator("slug", mode="before")
     @classmethod
@@ -79,7 +94,7 @@ class ProjectBase(BaseModel):
 
 class ProjectCreate(ProjectBase):
     """Schema for creating a new Project."""
-    pass
+    model_config = ConfigDict(extra="forbid")
 
 
 class ProjectUpdate(BaseModel):
@@ -87,8 +102,8 @@ class ProjectUpdate(BaseModel):
     title: Optional[str] = Field(default=None, min_length=1, max_length=255)
     slug: Optional[str] = Field(default=None, min_length=1, max_length=255)
     short_description: Optional[str] = Field(default=None, min_length=1, max_length=500)
-    description: Optional[str] = Field(default=None, min_length=1)
-    technologies: Optional[List[str]] = Field(default=None, min_length=1)
+    description: Optional[str] = Field(default=None, min_length=1, max_length=50000)
+    technologies: Optional[List[str]] = Field(default=None, min_length=1, max_length=50)
 
     category: Optional[str] = Field(default=None, max_length=100)
     github_url: Optional[str] = Field(default=None, max_length=500)
@@ -104,6 +119,8 @@ class ProjectUpdate(BaseModel):
 
     key_features: Optional[List[str]] = None
     challenges: Optional[List[str]] = None
+
+    model_config = ConfigDict(extra="forbid")
 
     @field_validator("title", "short_description", "description", mode="before")
     @classmethod

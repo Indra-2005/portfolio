@@ -53,16 +53,50 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def validate_production_security(self) -> "Settings":
         """
-        Security requirement: Production MUST reject the insecure/default development SECRET_KEY.
-        Never allow production deployment with the default value.
+        Security requirements for production environment:
+        1. COOKIE_SECURE must be True (HTTPS-only cookies).
+        2. SECRET_KEY must be at least 32 characters with no placeholder or default values.
+        3. BACKEND_CORS_ORIGINS must not contain wildcard '*' when authentication cookies are enabled.
         """
         if self.ENVIRONMENT.lower() == "production":
-            insecure_markers = ["insecure", "change-me", "secret-key", "default"]
-            if not self.SECRET_KEY or any(m in self.SECRET_KEY.lower() for m in insecure_markers):
+            # 1. Enforce HTTPS-only cookies in production
+            if not self.COOKIE_SECURE:
                 raise ValueError(
-                    "CRITICAL SECURITY ERROR: The default or insecure development SECRET_KEY "
-                    "is strictly forbidden in production. Set a secure, random SECRET_KEY in the environment."
+                    "CRITICAL SECURITY ERROR: COOKIE_SECURE must be True in production "
+                    "to ensure authentication cookies are only transmitted over HTTPS."
                 )
+
+            # 2. Enforce strong, non-default SECRET_KEY
+            if not self.SECRET_KEY or len(self.SECRET_KEY.strip()) < 32:
+                raise ValueError(
+                    "CRITICAL SECURITY ERROR: SECRET_KEY must be at least 32 characters "
+                    "long in production to prevent brute-force signature attacks."
+                )
+
+            insecure_markers = [
+                "insecure",
+                "change-me",
+                "secret-key",
+                "default",
+                "placeholder",
+                "admin",
+                "password",
+                "12345",
+                "example",
+            ]
+            if any(m in self.SECRET_KEY.lower() for m in insecure_markers):
+                raise ValueError(
+                    "CRITICAL SECURITY ERROR: The default, placeholder, or insecure development "
+                    "SECRET_KEY is strictly forbidden in production. Set a secure, random SECRET_KEY."
+                )
+
+            # 3. Reject wildcard CORS with credentials
+            if any(origin.strip() == "*" for origin in self.BACKEND_CORS_ORIGINS):
+                raise ValueError(
+                    "CRITICAL SECURITY ERROR: Wildcard '*' origin is strictly forbidden in "
+                    "BACKEND_CORS_ORIGINS in production when credentials/cookies are enabled."
+                )
+
         return self
 
     model_config = SettingsConfigDict(

@@ -12,8 +12,11 @@ class ContactMessageCreate(BaseModel):
     message: str = Field(..., min_length=10, max_length=3000, description="Message body")
     honeypot: Optional[str] = Field(
         default=None,
+        max_length=100,
         description="Spam prevention hidden field. Must be empty.",
     )
+
+    model_config = ConfigDict(extra="forbid")
 
     @field_validator("name", "message", mode="before")
     @classmethod
