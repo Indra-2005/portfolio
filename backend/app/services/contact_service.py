@@ -54,5 +54,20 @@ class ContactService:
             )
         return msg
 
+    def get_message_by_id(self, db: Session, message_id: int) -> ContactMessage:
+        """Fetch a single message by ID or raise 404."""
+        msg = self.repo.get_by_id(db, message_id)
+        if not msg:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Message with ID {message_id} was not found.",
+            )
+        return msg
+
+    def delete_message(self, db: Session, message_id: int) -> None:
+        """Permanently delete a contact message by ID."""
+        msg = self.get_message_by_id(db, message_id)
+        self.repo.delete(db, msg)
+
 
 contact_service = ContactService()

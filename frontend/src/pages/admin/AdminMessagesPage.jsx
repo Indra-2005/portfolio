@@ -17,6 +17,7 @@ import {
   X,
   Inbox,
   AlertCircle,
+  Trash2,
 } from 'lucide-react';
 
 export function AdminMessagesPage() {
@@ -26,6 +27,9 @@ export function AdminMessagesPage() {
   const [error, setError] = useState(null);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [markingId, setMarkingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const [deleteConfirmMessage, setDeleteConfirmMessage] = useState(null);
+  const [actionSuccess, setActionSuccess] = useState(null);
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -45,14 +49,26 @@ export function AdminMessagesPage() {
     fetchMessages();
   }, [fetchMessages]);
 
-  // Handle escape key to close message detail modal
+  // Auto-clear action success message after 4 seconds
+  useEffect(() => {
+    if (actionSuccess) {
+      const timer = setTimeout(() => setActionSuccess(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [actionSuccess]);
+
+  // Handle escape key to close message detail or confirmation modal
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
-        setSelectedMessage(null);
+        if (deleteConfirmMessage) {
+          setDeleteConfirmMessage(null);
+        } else if (selectedMessage) {
+          setSelectedMessage(null);
+        }
       }
     };
-    if (selectedMessage) {
+    if (selectedMessage || deleteConfirmMessage) {
       window.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
     } else {
@@ -62,7 +78,32 @@ export function AdminMessagesPage() {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [selectedMessage]);
+  }, [selectedMessage, deleteConfirmMessage]);
+
+  const handleDeleteClick = (msg, e) => {
+    if (e) e.stopPropagation();
+    setDeleteConfirmMessage(msg);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirmMessage) return;
+    const messageId = deleteConfirmMessage.id;
+    try {
+      setDeletingId(messageId);
+      await contactApi.deleteMessage(messageId);
+      setMessages((prev) => prev.filter((m) => m.id !== messageId));
+      setTotal((prev) => Math.max(0, prev - 1));
+      if (selectedMessage && selectedMessage.id === messageId) {
+        setSelectedMessage(null);
+      }
+      setDeleteConfirmMessage(null);
+      setActionSuccess('Message permanently deleted.');
+    } catch (err) {
+      alert(err.message || 'Failed to delete message.');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const handleMarkAsRead = async (messageId, e) => {
     if (e) e.stopPropagation();
@@ -147,6 +188,24 @@ export function AdminMessagesPage() {
             </button>
           </div>
         </div>
+
+        {/* Action Success Alert */}
+        {actionSuccess && (
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-300">
+            <div className="flex items-center space-x-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span className="font-medium">{actionSuccess}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActionSuccess(null)}
+              aria-label="Dismiss success notification"
+              className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-200 p-0.5 cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
 
         {/* Content Viewport */}
         {loading && messages.length === 0 ? (
@@ -252,6 +311,16 @@ export function AdminMessagesPage() {
                         >
                           View
                         </button>
+                        <button
+                          type="button"
+                          onClick={(e) => handleDeleteClick(msg, e)}
+                          disabled={deletingId === msg.id}
+                          title="Delete message"
+                          aria-label={`Delete message from ${msg.name}`}
+                          className="p-1.5 rounded-md text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors cursor-pointer inline-flex items-center justify-center align-middle"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -292,16 +361,28 @@ export function AdminMessagesPage() {
 
                   <div className="flex items-center justify-between pt-1 text-[11px] text-slate-400 font-mono">
                     <span>{formatDate(msg.created_at)}</span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenMessage(msg);
-                      }}
-                      className="text-blue-600 dark:text-blue-400 font-semibold"
-                    >
-                      View Details &rarr;
-                    </button>
+                    <div className="flex items-center space-x-3">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenMessage(msg);
+                        }}
+                        className="text-blue-600 dark:text-blue-400 font-semibold cursor-pointer"
+                      >
+                        View Details &rarr;
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteClick(msg, e)}
+                        disabled={deletingId === msg.id}
+                        title="Delete message"
+                        aria-label={`Delete message from ${msg.name}`}
+                        className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer inline-flex items-center justify-center"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -392,13 +473,84 @@ export function AdminMessagesPage() {
                   <span>Reply via Email Client</span>
                 </a>
 
+                <div className="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={(e) => handleDeleteClick(selectedMessage, e)}
+                    disabled={deletingId === selectedMessage.id}
+                    className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 border border-transparent hover:border-red-200 dark:hover:border-red-900 transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete</span>
+                  </button>
+
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setSelectedMessage(null)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteConfirmMessage && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+          >
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
+              <div className="flex items-start space-x-3">
+                <div className="p-2.5 rounded-xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 shrink-0">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <div className="space-y-1">
+                  <h2
+                    id="delete-modal-title"
+                    className="text-base font-bold text-slate-900 dark:text-white"
+                  >
+                    Delete Contact Message
+                  </h2>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                    Are you sure you want to permanently delete this inquiry from <span className="font-semibold text-slate-900 dark:text-white">{deleteConfirmMessage.name}</span>? This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <Button
+                  type="button"
                   variant="secondary"
                   size="sm"
-                  onClick={() => setSelectedMessage(null)}
+                  disabled={deletingId === deleteConfirmMessage.id}
+                  onClick={() => setDeleteConfirmMessage(null)}
                 >
-                  Close
+                  Cancel
                 </Button>
+                <button
+                  type="button"
+                  disabled={deletingId === deleteConfirmMessage.id}
+                  onClick={handleConfirmDelete}
+                  className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+                >
+                  {deletingId === deleteConfirmMessage.id ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Deleting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Permanently Delete</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>

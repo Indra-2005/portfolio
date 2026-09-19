@@ -80,3 +80,22 @@ def mark_message_as_read(
     """Mark a message as read (Admin only)."""
     msg = contact_service.mark_as_read(db=db, message_id=message_id)
     return ContactMessageResponse.model_validate(msg)
+
+
+@router.delete(
+    "/admin/messages/{message_id}",
+    status_code=status.HTTP_200_OK,
+    summary="[Admin] Delete contact message",
+    description="Permanently delete a contact message inquiry. Requires administrator authentication and CSRF protection.",
+    tags=["Contact (Admin)"],
+)
+def delete_contact_message(
+    message_id: int,
+    current_user: User = Depends(get_current_active_user),
+    _csrf: None = Depends(verify_csrf_protection),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Delete a contact message record (Admin only)."""
+    contact_service.delete_message(db=db, message_id=message_id)
+    return {"status": "ok", "message": "Message deleted successfully."}
+

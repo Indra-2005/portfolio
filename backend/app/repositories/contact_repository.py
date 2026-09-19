@@ -48,5 +48,10 @@ class ContactRepository:
             db.refresh(msg)
         return msg
 
+    def delete(self, db: Session, message: ContactMessage) -> None:
+        """Permanently delete a ContactMessage instance."""
+        db.delete(message)
+        db.commit()
+
 
 contact_repository = ContactRepository()

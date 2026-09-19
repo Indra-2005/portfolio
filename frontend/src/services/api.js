@@ -223,6 +223,13 @@ export const contactApi = {
   markMessageAsRead: async (id) => {
     return request(`/admin/messages/${id}/read`, { method: 'PATCH' });
   },
+
+  /**
+   * Admin: Permanently delete a contact message
+   */
+  deleteMessage: async (id) => {
+    return request(`/admin/messages/${id}`, { method: 'DELETE' });
+  },
 };
 
 export { API_BASE_URL };
