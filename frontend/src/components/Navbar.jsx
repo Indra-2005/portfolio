@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Menu, X, ArrowRight, Linkedin, Sun, Moon } from 'lucide-react';
+import { Menu, X, Linkedin, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { Button } from './Button';
 
 const PUBLIC_NAV_LINKS = [
   { to: '/', label: 'Home' },
@@ -41,28 +40,29 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/95 dark:bg-slate-950/95 border-b border-slate-200 dark:border-slate-800 transition-colors duration-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand / Monogram Logo */}
+        {/* Brand */}
         <NavLink
           to="/"
-          className="flex items-center space-x-2.5 text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-lg p-1"
+          className="flex items-center space-x-2.5 text-base font-bold tracking-tight text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-lg p-1"
         >
-          <span className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center font-mono text-xs font-bold text-white shadow-xs">
+          <span className="h-7 w-7 rounded-md bg-slate-900 dark:bg-white flex items-center justify-center font-mono text-[10px] font-bold text-white dark:text-slate-900">
             DB
           </span>
           <span className="font-bold tracking-tight">Devendra Bhoi</span>
         </NavLink>
 
-        {/* Desktop Navigation Links */}
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-1" aria-label="Main Navigation">
           {PUBLIC_NAV_LINKS.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
+              end={link.to === '/'}
               className={({ isActive }) =>
                 `px-3 py-1.5 rounded-lg text-sm transition-colors ${
                   isActive
-                    ? 'text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/80 font-semibold shadow-xs'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/70 font-medium'
+                    ? 'text-slate-900 dark:text-white font-semibold'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
                 }`
               }
             >
@@ -71,91 +71,72 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Desktop Actions: Theme Toggle, LinkedIn, Let's Connect */}
-        <div className="hidden md:flex items-center space-x-2">
-          {/* Dark / Light Mode Toggle */}
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center space-x-1.5">
           <button
             type="button"
             onClick={toggleTheme}
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors cursor-pointer"
+            className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors cursor-pointer"
             title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {isDark ? (
-              <Sun className="w-4 h-4 text-amber-400" />
+              <Sun className="w-4 h-4" />
             ) : (
-              <Moon className="w-4 h-4 text-slate-600" />
+              <Moon className="w-4 h-4" />
             )}
           </button>
 
-          {/* Compact LinkedIn Profile Link */}
           <a
             href="https://www.linkedin.com/in/devendra-bhoi-21a720243"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn profile"
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors cursor-pointer"
+            className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors cursor-pointer"
             title="LinkedIn Profile"
           >
             <Linkedin className="w-4 h-4" />
           </a>
 
-          {/* Let's Connect Button */}
-          <Button
+          <NavLink
             to="/contact"
-            variant="primary"
-            size="sm"
-            icon={ArrowRight}
-            iconPosition="right"
+            className="ml-1 px-4 py-1.5 rounded-lg text-sm font-medium bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
           >
-            Let's Connect
-          </Button>
+            Contact
+          </NavLink>
         </div>
 
-        {/* Mobile Header Controls */}
+        {/* Mobile Controls */}
         <div className="flex items-center space-x-1 md:hidden">
-          {/* Mobile Theme Toggle */}
           <button
             type="button"
             onClick={toggleTheme}
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
+            className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
           >
             {isDark ? (
-              <Sun className="w-4 h-4 text-amber-400" />
+              <Sun className="w-4 h-4" />
             ) : (
-              <Moon className="w-4 h-4 text-slate-600" />
+              <Moon className="w-4 h-4" />
             )}
           </button>
 
-          {/* Mobile LinkedIn Link */}
-          <a
-            href="https://www.linkedin.com/in/devendra-bhoi-21a720243"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn profile"
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
-          >
-            <Linkedin className="w-4 h-4" />
-          </a>
-
-          {/* Mobile Menu Toggle Button */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             aria-expanded={mobileMenuOpen}
             aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
+            className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Navigation Drawer / Dropdown */}
+      {/* Mobile Navigation */}
       {mobileMenuOpen && (
         <div
-          className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-950/98 backdrop-blur-xl px-4 pt-2 pb-6 space-y-3 shadow-lg"
+          className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 pt-2 pb-5 space-y-3"
           aria-label="Mobile Navigation"
         >
           <nav className="flex flex-col space-y-1">
@@ -163,11 +144,12 @@ export function Navbar() {
               <NavLink
                 key={link.to}
                 to={link.to}
+                end={link.to === '/'}
                 className={({ isActive }) =>
-                  `px-3.5 py-2.5 rounded-xl text-sm transition-colors ${
+                  `px-3 py-2.5 rounded-lg text-sm transition-colors ${
                     isActive
-                      ? 'text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 font-semibold'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+                      ? 'text-slate-900 dark:text-white font-semibold bg-slate-50 dark:bg-slate-900'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`
                 }
               >
@@ -175,17 +157,25 @@ export function Navbar() {
               </NavLink>
             ))}
           </nav>
-          <div className="pt-2">
-            <Button
-              to="/contact"
-              variant="primary"
-              size="md"
-              className="w-full"
-              icon={ArrowRight}
-              iconPosition="right"
+          <div className="pt-2 flex items-center space-x-3 px-3">
+            <a
+              href="https://github.com/Indra-2005"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub profile"
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
-              Let's Connect
-            </Button>
+              GitHub
+            </a>
+            <a
+              href="https://www.linkedin.com/in/devendra-bhoi-21a720243"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn profile"
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              LinkedIn
+            </a>
           </div>
         </div>
       )}

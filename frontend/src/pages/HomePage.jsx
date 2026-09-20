@@ -12,48 +12,45 @@ import {
   ArrowRight,
   Github,
   Mail,
-  Server,
-  Database,
-  Cpu,
-  Wrench,
-  GraduationCap,
-  Sparkles,
 } from 'lucide-react';
 
 const SKILL_CATEGORIES = [
   {
-    title: 'Machine Learning & Data',
-    icon: Cpu,
+    title: 'Programming',
+    skills: ['Python', 'C++', 'JavaScript', 'SQL'],
+  },
+  {
+    title: 'AI / Machine Learning',
     skills: [
-      'Python',
-      'Pandas',
-      'NumPy',
-      'Scikit-Learn',
-      'Exploratory Data Analysis',
-      'Data Preprocessing',
-      'Feature Engineering',
+      'Machine Learning',
+      'Deep Learning',
+      'Computer Vision',
+      'Predictive Analytics',
+      'Model Development',
       'Model Evaluation',
+      'Classification',
+      'Regression',
+      'Clustering',
     ],
   },
   {
-    title: 'Databases & SQL',
-    icon: Database,
-    skills: ['PostgreSQL', 'SQL Queries', 'Relational Schema Design', 'Alembic Migrations', 'SQLAlchemy 2.x'],
+    title: 'Data',
+    skills: [
+      'Pandas',
+      'NumPy',
+      'Matplotlib',
+      'Data Preprocessing',
+      'Feature Engineering',
+      'EDA',
+    ],
   },
   {
-    title: 'Backend & APIs',
-    icon: Server,
-    skills: ['FastAPI', 'REST API Development', 'Pydantic v2', 'Endpoint Design', 'Modular Architecture'],
+    title: 'Databases',
+    skills: ['MySQL', 'PostgreSQL', 'MongoDB'],
   },
   {
-    title: 'Currently Learning',
-    icon: Sparkles,
-    skills: ['Deep Learning', 'PyTorch', 'Computer Vision', 'Neural Networks'],
-  },
-  {
-    title: 'Tools & Development',
-    icon: Wrench,
-    skills: ['Git', 'GitHub', 'Linux / Bash', 'Postman', 'Docker Basics'],
+    title: 'Tools',
+    skills: ['Git', 'GitHub', 'VS Code', 'Jupyter Notebook'],
   },
 ];
 
@@ -93,30 +90,33 @@ export function HomePage() {
     <>
       <SEO
         title="Devendra Bhoi | Machine Learning & Software Portfolio"
-        description="Devendra Bhoi — Computer Engineering graduate from SSBT COET (2026) focused on Machine Learning, AI fundamentals, Python, SQL, and data-driven systems."
+        description="Devendra Bhoi — Computer Engineering graduate from SSBT COET (2026) focused on Machine Learning, AI fundamentals, Python, SQL, and software development."
       />
 
       <div className="space-y-20 sm:space-y-28">
-        {/* ==================================================================== */}
-        {/* HERO SECTION */}
-        {/* ==================================================================== */}
-        <section className="pt-4 sm:pt-10 pb-6 max-w-4xl mx-auto text-left space-y-8">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-mono font-medium tracking-wide uppercase bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800/80">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>SSBT COET (2026) • Computer Engineering</span>
-          </div>
+        {/* ================================================================ */}
+        {/* HERO */}
+        {/* ================================================================ */}
+        <section className="pt-4 sm:pt-10 pb-6 max-w-3xl text-left space-y-6">
+          <p className="text-sm font-mono text-slate-500 dark:text-slate-400 tracking-wide">
+            Computer Engineering Graduate · SSBT COET, 2026
+          </p>
 
           <div className="space-y-4">
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
-              Applying Machine Learning &amp; AI Fundamentals to Practical Systems.
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-[1.15]">
+              Hi, I'm Devendra Bhoi.
+              <br />
+              <span className="text-slate-500 dark:text-slate-400">
+                AI/ML & Software Development.
+              </span>
             </h1>
-            <p className="text-base sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-normal max-w-3xl">
-              I am <span className="font-semibold text-slate-900 dark:text-white">Devendra Bhoi</span>, a Computer Engineering student graduating in 2026 from SSBT COET with a primary interest in Machine Learning and Artificial Intelligence. I develop data-driven applications, clean predictive pipelines, and structured backend services with Python, SQL, and modern frameworks.
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+              I build machine learning models and software applications using Python, SQL, and modern frameworks. Currently focused on predictive modeling, computer vision, and clean backend development.
             </p>
           </div>
 
-          {/* Action CTAs */}
-          <div className="flex flex-wrap items-center gap-4 pt-2">
+          {/* CTAs */}
+          <div className="flex flex-wrap items-center gap-3 pt-1">
             <Button
               to="/projects"
               variant="primary"
@@ -124,7 +124,7 @@ export function HomePage() {
               icon={ArrowRight}
               iconPosition="right"
             >
-              Explore Projects
+              View Projects
             </Button>
             <Button
               to="/contact"
@@ -145,36 +145,45 @@ export function HomePage() {
           </div>
         </section>
 
-        {/* ==================================================================== */}
-        {/* SELECTED WORK / FEATURED PROJECTS */}
-        {/* ==================================================================== */}
+        {/* ================================================================ */}
+        {/* FEATURED PROJECTS */}
+        {/* ================================================================ */}
         <section className="space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <SectionHeading
               eyebrow="Selected Work"
-              title="Featured Engineering Projects"
-              description="Data-driven applications and software systems built with disciplined structure, relational persistence, and clean APIs."
+              title="Featured Projects"
+              description="Projects I've built to explore machine learning, data analysis, and software engineering."
             />
             <Link
               to="/projects"
-              className="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group flex-shrink-0"
+              className="inline-flex items-center space-x-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group flex-shrink-0"
             >
-              <span>View all projects</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <span>All projects</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
 
           {loading ? (
             <ProjectGridSkeleton count={3} />
           ) : error ? (
-            <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-600 dark:text-slate-400">
-              {error}
+            <div className="p-6 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-2">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Unable to load featured projects at this time.
+              </p>
+              <Link
+                to="/projects"
+                className="inline-flex items-center space-x-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                <span>Browse all projects</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
             </div>
           ) : featuredProjects.length === 0 ? (
             <EmptyState
-              title="Projects Updating"
-              description="Featured projects are currently being organized in the database. You can explore all published projects via the link below."
-              actionText="View Projects Directory"
+              title="Projects Coming Soon"
+              description="Featured projects are being organized. Check the projects page for all published work."
+              actionText="View Projects"
               actionTo="/projects"
             />
           ) : (
@@ -182,62 +191,46 @@ export function HomePage() {
           )}
         </section>
 
-        {/* ==================================================================== */}
-        {/* TECHNICAL COMPETENCIES / SKILLS */}
-        {/* ==================================================================== */}
-        <section className="space-y-10">
+        {/* ================================================================ */}
+        {/* SKILLS */}
+        {/* ================================================================ */}
+        <section className="space-y-8">
           <SectionHeading
-            eyebrow="Technical Competencies"
-            title="Core Skills &amp; Technical Focus"
-            description="Foundations in Machine Learning, predictive modeling, relational databases, and clean software development."
+            eyebrow="Technical Skills"
+            title="Technologies & Tools"
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {SKILL_CATEGORIES.map((cat) => {
-              const Icon = cat.icon;
-              return (
-                <div
-                  key={cat.title}
-                  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all space-y-4"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <h3 className="font-semibold text-slate-900 dark:text-white text-base tracking-tight">
-                      {cat.title}
-                    </h3>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {cat.skills.map((skill) => (
-                      <TechnologyTag key={skill} name={skill} />
-                    ))}
-                  </div>
+            {SKILL_CATEGORIES.map((cat) => (
+              <div
+                key={cat.title}
+                className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3"
+              >
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white tracking-tight">
+                  {cat.title}
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {cat.skills.map((skill) => (
+                    <TechnologyTag key={skill} name={skill} />
+                  ))}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* ==================================================================== */}
+        {/* ================================================================ */}
         {/* ABOUT PREVIEW */}
-        {/* ==================================================================== */}
-        <section className="p-8 sm:p-12 rounded-3xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-6">
-          <div className="flex items-center space-x-2.5 text-xs font-mono uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">
-            <GraduationCap className="w-4 h-4" />
-            <span>Academic Background Snapshot</span>
-          </div>
-
-          <div className="space-y-4 max-w-3xl">
-            <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Solid foundations in Computer Engineering, ML workflows, and clean code.
-            </h3>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-              With a background in Computer Engineering at SSBT COET (Graduation Year: 2026), I approach problem solving with a focus on data preprocessing, feature engineering, predictive modeling, and clean relational architecture.
-            </p>
-          </div>
-
-          <div className="pt-2">
+        {/* ================================================================ */}
+        <section className="max-w-3xl space-y-4">
+          <SectionHeading
+            eyebrow="About"
+            title="Background"
+          />
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+            Computer Engineering graduate from SSBT COET (2026) with a focus on machine learning, data preprocessing, and building practical software systems. I enjoy turning ideas into working applications while strengthening my foundations in computer science.
+          </p>
+          <div className="pt-1">
             <Button
               to="/about"
               variant="outline"
@@ -245,29 +238,22 @@ export function HomePage() {
               icon={ArrowRight}
               iconPosition="right"
             >
-              Read Full Academic &amp; Engineering Profile
+              Learn More
             </Button>
           </div>
         </section>
 
-        {/* ==================================================================== */}
-        {/* CONTACT CTA BANNER */}
-        {/* ==================================================================== */}
-        <section className="text-center max-w-2xl mx-auto py-8 sm:py-12 space-y-6">
-          <div className="inline-flex p-3 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800/80 mx-auto">
-            <Sparkles className="w-6 h-6" />
-          </div>
-
-          <div className="space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Interested in collaborating or discussing opportunities?
-            </h2>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-              I am actively seeking entry-level opportunities in Machine Learning, AI, and Software Engineering where I can apply my skills to real-world challenges.
-            </p>
-          </div>
-
-          <div className="pt-2">
+        {/* ================================================================ */}
+        {/* CONTACT CTA */}
+        {/* ================================================================ */}
+        <section className="text-center max-w-xl mx-auto py-8 sm:py-12 space-y-5">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Interested in working together?
+          </h2>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+            I'm looking for entry-level opportunities in machine learning, AI, and software engineering. Feel free to reach out.
+          </p>
+          <div className="pt-1">
             <Button
               to="/contact"
               variant="primary"

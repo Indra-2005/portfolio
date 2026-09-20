@@ -58,7 +58,7 @@ export function ProjectDetailPage() {
   if (loading) {
     return (
       <div className="py-12">
-        <LoadingState message="Retrieving case study details from PostgreSQL..." />
+        <LoadingState message="Loading project details..." />
       </div>
     );
   }
@@ -66,7 +66,7 @@ export function ProjectDetailPage() {
   if (error || !project) {
     return (
       <div className="max-w-xl mx-auto py-16 text-center space-y-6">
-        <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+        <div className="p-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
           <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center mx-auto">
             <Layers className="w-6 h-6" />
           </div>
@@ -119,13 +119,13 @@ export function ProjectDetailPage() {
             className="inline-flex items-center space-x-1.5 text-xs font-mono text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus-visible:outline-none focus-visible:underline"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-            <span>Back to Projects Feed</span>
+            <span>Back to Projects</span>
           </Link>
         </div>
 
         {/* Hero Media / Banner */}
         {hasImage ? (
-          <div className="w-full aspect-[21/9] sm:aspect-[16/7] rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="w-full aspect-[21/9] sm:aspect-[16/7] rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800">
             <img
               src={image_url}
               alt={title}
@@ -134,13 +134,13 @@ export function ProjectDetailPage() {
             />
           </div>
         ) : (
-          <div className="w-full aspect-[21/7] rounded-3xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border border-slate-200 dark:border-slate-800 p-8 flex flex-col justify-between relative overflow-hidden shadow-xs">
+          <div className="w-full aspect-[21/7] rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border border-slate-200 dark:border-slate-800 p-8 flex flex-col justify-between relative overflow-hidden">
             <div className="flex items-center justify-between text-xs font-mono text-blue-700 dark:text-blue-400 z-10">
               <span className="uppercase tracking-wider font-semibold">{category || 'Engineering'}</span>
               <span className="text-slate-500 dark:text-slate-400 font-mono">/{slug}</span>
             </div>
             <div className="flex items-center justify-between z-10">
-              <div className="p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-xs">
+              <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-xs">
                 <Code2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
@@ -225,7 +225,7 @@ export function ProjectDetailPage() {
             <h2 className="text-xs uppercase tracking-wider font-mono font-semibold text-slate-700 dark:text-slate-300">
               Project Details &amp; Implementation
             </h2>
-            <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line font-normal shadow-xs">
+            <div className="p-6 sm:p-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line font-normal shadow-xs">
               {description}
             </div>
           </section>

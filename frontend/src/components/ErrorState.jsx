@@ -9,7 +9,7 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className="p-8 sm:p-10 text-center bg-rose-50 dark:bg-rose-950/40 rounded-2xl border border-rose-200 dark:border-rose-900/60 space-y-4 max-w-lg mx-auto"
+      className="p-8 sm:p-10 text-center bg-rose-50 dark:bg-rose-950/40 rounded-xl border border-rose-200 dark:border-rose-900/60 space-y-4 max-w-lg mx-auto"
     >
       <div className="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 flex items-center justify-center mx-auto">
         <AlertTriangle className="w-6 h-6" />

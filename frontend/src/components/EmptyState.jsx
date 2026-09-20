@@ -3,14 +3,14 @@ import { Button } from './Button';
 
 export function EmptyState({
   title = 'No records found',
-  description = 'There are currently no items matching this criteria. Please check back soon.',
+  description = 'There are currently no items to display. Please check back soon.',
   actionText,
   actionTo,
   onAction,
   icon: Icon = Layers,
 }) {
   return (
-    <div className="p-12 sm:p-16 text-center bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 space-y-4 max-w-xl mx-auto">
+    <div className="p-12 sm:p-16 text-center bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-dashed border-slate-300 dark:border-slate-800 space-y-4 max-w-xl mx-auto">
       <div className="w-12 h-12 rounded-xl bg-slate-200/80 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center mx-auto">
         <Icon className="w-6 h-6" />
       </div>

@@ -13,7 +13,7 @@ export function NotFoundPage() {
       />
 
       <div className="max-w-md mx-auto text-center py-16 space-y-6">
-        <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/80 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto shadow-xs">
+        <div className="w-16 h-16 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/80 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto shadow-xs">
           <HelpCircle className="w-8 h-8" />
         </div>
 

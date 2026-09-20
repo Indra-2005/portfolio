@@ -21,7 +21,7 @@ export function ProjectCard({ project }) {
   const hasImage = image_url && !imageError;
 
   return (
-    <article className="group flex flex-col justify-between rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 hover:shadow-md shadow-xs overflow-hidden">
+    <article className="group flex flex-col justify-between rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 hover:shadow-sm overflow-hidden">
       {/* Media / Visual Area */}
       {hasImage ? (
         <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800">
@@ -30,9 +30,9 @@ export function ProjectCard({ project }) {
             alt={title}
             loading="lazy"
             onError={() => setImageError(true)}
-            className="w-full h-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-500 ease-out"
+            className="w-full h-full object-cover object-top group-hover:scale-[1.01] transition-transform duration-500 ease-out"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+
         </div>
       ) : (
         /* Fallback Visual Banner */

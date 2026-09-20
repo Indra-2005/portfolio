@@ -68,8 +68,8 @@ export function ProjectsPage() {
         <div className="space-y-4">
           <SectionHeading
             eyebrow="Portfolio Showcase"
-            title="Projects &amp; Case Studies"
-            description="All projects are queried dynamically from the PostgreSQL database, respecting priority order rankings and publication controls."
+            title="Projects"
+            description="A collection of projects I've built."
           />
         </div>
 
@@ -119,8 +119,8 @@ export function ProjectsPage() {
             title={searchQuery || selectedCategory !== 'All' ? 'No matching projects' : 'No projects published'}
             description={
               searchQuery || selectedCategory !== 'All'
-                ? 'Try adjusting your search terms or selecting a different category filter.'
-                : 'Projects are currently being cataloged in the database. Please check back soon.'
+                ? 'Try adjusting your search or selecting a different category.'
+                : 'Projects are being organized. Please check back soon.'
             }
             actionText={searchQuery || selectedCategory !== 'All' ? 'Reset Filters' : undefined}
             onAction={() => {

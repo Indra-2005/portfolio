@@ -1,11 +1,11 @@
 import { Loader2 } from 'lucide-react';
 
-export function LoadingState({ message = 'Loading records from database...' }) {
+export function LoadingState({ message = 'Loading...' }) {
   return (
     <div
       role="status"
       aria-live="polite"
-      className="min-h-[240px] w-full flex flex-col items-center justify-center space-y-3 p-8 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800"
+      className="min-h-[240px] w-full flex flex-col items-center justify-center space-y-3 p-8 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800"
     >
       <Loader2 className="w-7 h-7 text-blue-600 dark:text-blue-400 animate-spin" />
       <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-mono">{message}</p>
@@ -18,7 +18,7 @@ export function ProjectCardSkeleton() {
   return (
     <div
       aria-hidden="true"
-      className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs animate-pulse flex flex-col justify-between"
+      className="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs animate-pulse flex flex-col justify-between"
     >
       <div className="aspect-[16/9] w-full bg-slate-200 dark:bg-slate-800" />
       <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
