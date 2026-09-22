@@ -1,5 +1,5 @@
 {
-  "name": "Devendra Bhoi | Machine Learning & Software Portfolio",
+  "name": "Devendra Bhoi",
   "short_name": "Devendra Bhoi",
   "description": "Personal portfolio of Devendra Bhoi, Computer Engineering graduate from SSBT COET focused on Machine Learning, AI fundamentals, and software development.",
   "start_url": "/",
@@ -16,6 +16,11 @@
     {
       "src": "/favicon-32x32.png",
       "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-48x48.png",
+      "sizes": "48x48",
       "type": "image/png"
     },
     {

@@ -94,14 +94,14 @@ export function SEO({
     setMetaTag('property', 'og:description', metaDescContent);
     setMetaTag('property', 'og:type', type);
     setMetaTag('property', 'og:url', canonicalUrl);
-    setMetaTag('property', 'og:site_name', 'Devendra Bhoi Portfolio');
+    setMetaTag('property', 'og:site_name', 'Devendra Bhoi');
 
     // Only set og:image when a genuine, non-empty image exists (no fake URLs)
     const hasValidImage = image && typeof image === 'string' && (image.startsWith('http://') || image.startsWith('https://'));
     setMetaTag('property', 'og:image', hasValidImage ? image : null);
 
     // 6. Twitter / X Card Metadata
-    setMetaTag('name', 'twitter:card', hasValidImage ? 'summary_large_image' : 'summary');
+    setMetaTag('name', 'twitter:card', 'summary_large_image');
     setMetaTag('name', 'twitter:title', computedTitle);
     setMetaTag('name', 'twitter:description', metaDescContent);
     setMetaTag('name', 'twitter:image', hasValidImage ? image : null);
@@ -124,17 +124,10 @@ export function SEO({
     // Strictly factual structured data (NO personal email address, NO invented employers/certifications)
     const graph = [
       {
-        '@type': 'WebSite',
-        '@id': `${siteBaseUrl}/#website`,
-        'name': 'Devendra Bhoi | Machine Learning & Software Portfolio',
-        'url': siteBaseUrl,
-        'description': DEFAULT_DESCRIPTION,
-      },
-      {
         '@type': 'Person',
         '@id': `${siteBaseUrl}/#person`,
         'name': 'Devendra Bhoi',
-        'url': siteBaseUrl,
+        'url': `${siteBaseUrl}/`,
         'sameAs': [
           'https://github.com/Indra-2005',
           'https://www.linkedin.com/in/devendra-bhoi-21a720243',

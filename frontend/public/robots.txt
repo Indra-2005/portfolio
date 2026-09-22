@@ -4,5 +4,12 @@ Allow: /about
 Allow: /projects
 Allow: /projects/*
 Allow: /contact
+Allow: /favicon.svg
+Allow: /favicon-48x48.png
+Allow: /favicon-32x32.png
+Allow: /favicon-16x16.png
+Allow: /favicon.ico
 Disallow: /admin
 Disallow: /admin/*
+
+Sitemap: https://devendra-bhoi.vercel.app/sitemap.xml
